@@ -1,0 +1,30 @@
+Public Class BaoCao_DTO
+    'phần khai báo
+#Region "phần khai báo"
+    Public SoLuongDat As Integer
+    Public Khoi As Integer
+    Public TenLop As String
+    Public TiLe As String
+    Public HocKi As String
+    Public NamBD As Integer
+    Public NamKT As Integer
+#End Region
+    Public Sub New(ByVal soluong As Integer, ByVal khoi As Integer, ByVal lop As String, ByVal tile As String, ByVal hk As String, ByVal bd As Integer, ByVal kt As Integer)
+        Me.SoLuongDat = soluong
+        Me.Khoi = khoi
+        Me.TenLop = lop
+        Me.TiLe = tile
+        Me.HocKi = hk
+        Me.NamBD = bd
+        Me.NamKT = kt
+    End Sub
+    Public Sub New(ByVal bc As BaoCao_DTO)
+        SoLuongDat = bc.SoLuongDat
+        Khoi = bc.Khoi
+        TenLop = bc.TenLop
+        TiLe = bc.TiLe
+        HocKi = bc.HocKi
+        NamBD = bc.NamBD
+        NamKT = bc.NamKT
+    End Sub
+End Class
