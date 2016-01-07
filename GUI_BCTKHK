@@ -1,0 +1,57 @@
+Imports BUS_DoAn
+Imports System.String
+
+Public Class BaoCaoTongKetHocKy
+#Region "phần khai báo"
+    Shared KT As Integer
+    'phần khai báo trong xuất danh sách các học sinh
+    Public Shared BC_DanhSach As DataTable
+    Public Shared WithEvents BC_DanhSach_Databinding As BindingManagerBase
+#End Region
+
+
+    Public Sub HienThiDanhSach(ByVal hocki As String, ByVal bd As Integer, ByVal kt As Integer)
+        ' If (hocki <> "" And bd <> 0 And kt <> 0) Then
+        BC_DanhSach = New DataTable
+        BC_DanhSach = BUS_BaoCao.BUS_BaoCaoHocKi(hocki, bd, kt)
+        BC_DanhSach_Databinding = Me.BindingContext(BC_DanhSach)
+
+        dtgvdanhsach.AutoGenerateColumns = False
+        dtgvdanhsach.DataSource = BC_DanhSach
+        ' End If
+
+    End Sub
+
+    Private Sub BaoCaoTongKetHocKy_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Loadate()
+
+    End Sub
+    Private Sub Loadate()
+        Dim dt As New DataTable
+        dt = BUS_BaoCao.Bus_DanhSachHK()
+        cbx_namhoc.DisplayMember = "ten"
+        cbx_namhoc.ValueMember = "ten"
+        cbx_namhoc.DataSource = dt
+
+    End Sub
+
+    'Private Sub cbx_namhoc_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbx_namhoc.SelectedIndexChanged
+    '    HienThiDanhSach(cbx_hocky.Text.ToString(), BUS_BaoCao.BUS_GetNamBD(cbx_namhoc.Text.ToString()), BUS_BaoCao.BUS_GetNamKT(cbx_namhoc.Text.ToString()))
+    'End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        'MessageBox.Show(cbx_hocky.SelectedItem)
+        Dim dt As New DataTable
+        'dt = BUS_BaoCao.BaoCao_HK(cbx_hocky.SelectedItem, BUS_BaoCao.BUS_GetNamBD(cbx_namhoc.SelectedValue), BUS_BaoCao.BUS_GetNamKT(cbx_namhoc.SelectedValue))
+        'dt = BUS_BaoCao.BUS_TongKet(cbx_hocky.SelectedItem, BUS_BaoCao.BUS_GetNamBD(cbx_namhoc.SelectedValue), BUS_BaoCao.BUS_GetNamKT(cbx_namhoc.SelectedValue))
+        dt = BUS_BaoCao.BUS_BaoCaoHocKi(cbx_hocky.SelectedItem, BUS_BaoCao.BUS_GetNamBD(cbx_namhoc.SelectedValue), BUS_BaoCao.BUS_GetNamKT(cbx_namhoc.SelectedValue))
+        dtgvdanhsach.DataSource = dt
+        For i As Integer = 1 To dtgvdanhsach.RowCount() Step 1
+            dtgvdanhsach.Rows(i - 1).Cells("STT").Value = i
+        Next
+    End Sub
+
+    'Private Sub cbx_hocky_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbx_hocky.SelectedIndexChanged
+    '    HienThiDanhSach(cbx_hocky.Text.ToString(), GetNamBD(cbx_namhoc.Text.ToString()), GetNamKT(cbx_namhoc.Text.ToString()))
+    'End Sub
+End Class
