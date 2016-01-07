@@ -1,0 +1,38 @@
+Imports DTO_DoAn
+Imports System.Data.SqlClient
+Public Class DAO_BaoCao
+    Shared Function DAO_TongKet(str As String, bd As Integer, kt As Integer) As DataTable
+        Return Dataprovider.HamTruyVan("select * from dbo.BaoCao_FN( N'" + str.ToString() + "'," + bd.ToString() + "," + kt.ToString() + ")")
+    End Function
+    Shared Function DAO_DanhSachHK() As DataTable
+        Dim dt As New DataTable
+        dt = Dataprovider.HamTruyVan("select Distinct(convert(nvarchar(5),NamBatDau) + '-'+ convert(nvarchar(5),NamKetTHuc)) as ten  from NamHoc")
+        Return dt
+    End Function
+    Shared Function DAO_LoadHK() As DataTable
+        Dim dt As New DataTable
+        dt = Dataprovider.HamTruyVan("select Distinct(HocKy) from NamHoc")
+        Return dt
+    End Function
+    Shared Function DAO_TongKetHK(ByVal hocki As String, ByVal nambd As Integer, ByVal namkt As Integer) As DataTable
+        Dim dt As DataTable
+
+        dt = Dataprovider.HamTruyVan("select count(KQ.HocSinh) as SoLuongDat , LH.Khoi , HS.TenLop ,cast( (convert(numeric(5,2),convert(float,Count(KQ.HocSinh))/(LH.SiSo))*100) as nvarchar(10))+'%' as TiLe
+                                      from KetQuaHocTap KQ,NamHoc NH , HocSinh HS,LopHoc LH 
+	                                  where  nh.HocKy = N'" + hocki.ToString() + "' and NH.NamBatDau = " + nambd.ToString() + " and NH.NamKetTHuc = " + namkt.ToString() + " and NH.MaNamHoc = KQ.NamHoc 
+                                      and LH.TenLop = HS.TenLop and KQ.HocSinh = HS.MaHS and KQ.Diemtb > 5
+	                                  group by LH.Khoi,HS.TenLop,LH.SiSo")
+        Return dt
+        ' count(KQ.HocSinh) as SoLuongDat , LH.Khoi , HS.TenLop ,cast( (convert(numeric(5,2),convert(float,Count(KQ.HocSinh))/(LH.SiSo))*100) as nvarchar(10))+'%' as TiLe
+    End Function
+    Shared Function DAO_BaoCaoMonHoc(ten As String, monhoc As String, hocki As String, khoi As Integer) As DataTable
+        Return Dataprovider.HamTruyVan("select * from dbo.BaoCaoMon_FN( N'" + ten.ToString() + "',N'" + monhoc.ToString() + "',N'" + hocki.ToString() + "'," + khoi.ToString() + ")")
+    End Function
+    Shared Function DAO_BaoCaoTKMH(ten As String, monhoc As String, hocki As String, khoi As Integer) As DataTable
+        Return Dataprovider.HamTruyVan("select lh.Khoi ,lh.TenLop , COUNT(ct.HocSinh) as SoLuongDat , cast( (convert(numeric(5,2),convert(float,Count(ct.HocSinh))/(LH.SiSo))*100) as nvarchar(10))+'%' as TiLe
+	                                    from GiaoVien gv,MonHoc mh,LopHoc lh,ChiTietKetQuaHocTap ct,HocSinh hs,NamHoc nh
+	                                    where gv.TenGV = N'" + ten.ToString() + "' and mh.TenMH = N'" + monhoc.ToString() + "' and nh.HocKy = N'" + hocki.ToString() + "' and lh.Khoi = " + khoi.ToString() + " and ct.Diemtb > 5 and gv.MonDay = mh.MaMH and lh.TenLop = hs.TenLop and hs.MaHS = ct.HocSinh 
+	                                    and ct.MonHoc = mh.MaMH and mh.MaMH = gv.MonDay  and nh.MaNamHoc = ct.NamHoc
+	                                    group by lh.Khoi ,lh.TenLop,lh.SiSo")
+    End Function
+End Class
