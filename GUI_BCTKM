@@ -1,0 +1,74 @@
+Imports BUS_DoAn
+Imports DTO_DoAn
+Public Class BaoCaoTongKetMon
+#Region "phan khai bao"
+    Private BangLopHoc As DataTable
+    Private ThongTinChung As DataTable
+    Private WithEvents DataBinding As BindingManagerBase
+#End Region
+#Region "phan khoi tao"
+    Public Sub New()
+        InitializeComponent()
+        ThongTinChung = BUS_MonHoc.Bus_DanhSachMonHoc()
+        DataBinding = Me.BindingContext(ThongTinChung)
+    End Sub
+#End Region
+#Region "phan hien thi"
+    Public Sub HienThi()
+        cbx_mon.DisplayMember = "TenMH"
+        cbx_mon.ValueMember = "TenMH"
+        cbx_mon.DataSource = ThongTinChung
+    End Sub
+    Public Sub HienThiKH()
+        cbx_hocky.DisplayMember = "HocKy"
+        cbx_hocky.ValueMember = "HocKy"
+        cbx_hocky.DataSource = BUS_BaoCao.BUS_LoadHK()
+    End Sub
+#End Region
+#Region "phan xu ly su kien"
+    Private Sub BaoCaoTongKetMon_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        HienThi()
+        HienThiKH()
+    End Sub
+    'khi nguoi dung chon khoi 
+    'Private Sub cbx_khoi_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbx_khoi.SelectedIndexChanged
+    '    dgv_danhsachcaclop.AutoGenerateColumns = False
+    '    BangLopHoc = BUS_LopHoc.LayDanhSachCacLop(Integer.Parse(cbx_khoi.SelectedItem()).ToString())
+    '    BangLopHoc.Columns.Add("SoLuongDat")
+    '    BangLopHoc.Columns.Add("TyLe")
+    '    'xu ly 
+    '    For Each row As DataRow In BangLopHoc.Rows
+    '        Dim tbl_ketqua = New DataTable
+    '        tbl_ketqua = BUS_ChiTietKetQuaHocTap.Bus_DanhSachChiTietKetQua(row("TenLop"), cbx_mon.SelectedValue.ToString())
+    '        'đọc các học sinh đạt
+    '        Dim count As Integer = 0
+    '        For Each row1 As DataRow In tbl_ketqua.Rows
+    '            If (((Convert.ToDecimal(row1("Diem15").ToString()) + (Convert.ToDecimal(row1("Diem45")) * 2) + (Convert.ToDecimal(row1("DiemThi")) * 3)) / 6) > 5) Then
+    '                count += 1
+    '            End If
+    '        Next
+    '        row("SoLuongDat") = count
+    '    Next
+    '    dgv_danhsachcaclop.DataSource = BangLopHoc
+    'End Sub
+    ''khi nguoi dung chon mon hoc mun xem bao cao
+    Private Sub cbx_mon_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbx_mon.SelectedIndexChanged
+        txb_truongbomon.Text = DataBinding.Current("TenGV").ToString()
+    End Sub
+    ''khi thay đổi học kì 
+    'Private Sub cbx_hocky_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbx_hocky.SelectedIndexChanged
+
+    'End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim dt As New DataTable
+        dt = BUS_BaoCao.BUS_BaoCaoMH1(txb_truongbomon.Text, cbx_mon.SelectedValue, cbx_hocky.SelectedValue, cbx_khoi.SelectedItem)
+        'dt = BUS_BaoCao.BUS_BaoCaoMH1("Trịnh Văn Hải", "Toán", "Học Kỳ I", 11)
+        dgv.DataSource = dt
+        For i As Integer = 1 To dgv.RowCount() Step 1
+            dgv.Rows(i - 1).Cells("STT").Value = i
+        Next
+    End Sub
+
+#End Region
+End Class
